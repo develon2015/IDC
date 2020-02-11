@@ -24,7 +24,7 @@ function task() {
         singleData.result = e;
         singleData.index ++ ;
     });
-    setTimeout(task, 200);
+    setTimeout(task, 1000);
 }
 task();
 export default {

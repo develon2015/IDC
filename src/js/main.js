@@ -11,10 +11,15 @@ let result = {
 }
 function main() {
     console.log(`第${ ++result.count }次监控：`)
-    // child_process.execSync(`wget -O index.html '${URL}';`);
+    child_process.execSync(`wget -O index.html '${URL}';`);
     const html = fs.readFileSync(`${__dirname}/index.html`).toString();
 
     const dom = new JSDOM(html);
+    let test = dom.window.document.querySelectorAll(
+        'tbody tr.table_server--row')[1]
+    test.innerHTML.split('\n').forEach(it => {
+	    console.log(it.trim())
+    })
     let list = dom.window.document.querySelectorAll(
         'tbody tr.table_server--row td.table_server--col_actions div[aria-labelledby]')
             [1];
@@ -30,7 +35,7 @@ function main() {
         tmp.push({ i, href: e.href, loc: e.innerHTML });
     });
     result.availables = tmp;
-    setTimeout(main, 2000);
+    setTimeout(main, 4000);
 }
 
 const app = new express();
