@@ -11,21 +11,26 @@ let result = {
 }
 function main() {
     console.log(`第${ ++result.count }次监控：`)
-    child_process.execSync(`wget -O index.html '${URL}';`);
+    // child_process.execSync(`wget -O index.html '${URL}';`);
     const html = fs.readFileSync(`${__dirname}/index.html`).toString();
 
     const dom = new JSDOM(html);
-    let list = dom.window.document.querySelectorAll('tbody tr.table_server--row td.table_server--col_actions div[aria-labelledby]')[9];
+    let list = dom.window.document.querySelectorAll(
+        'tbody tr.table_server--row td.table_server--col_actions div[aria-labelledby]')
+            [1];
     list = list.getElementsByTagName('a');
     console.log(`当前有${list.length}个地区可用`);
     list = Array.from(list);
+    let tmp = [];
     list.forEach((e, i) => {
         console.log(i+1 + '. ' + e.innerHTML);
         if (e.innerHTML === 'Los Angeles, CA') {
             console.log('洛杉矶可用！');
         }
+        tmp.push({ i, href: e.href, loc: e.innerHTML });
     });
-    setTimeout(main, 8000);
+    result.availables = tmp;
+    setTimeout(main, 2000);
 }
 
 const app = new express();
@@ -34,9 +39,12 @@ app.all('/', (req, res, next) => {
 });
 app.get('/check', (req, res, next) => {
     //
+    res.set({
+        'Access-Control-Allow-Origin': '*',
+    });
     res.send(result);
 });
-app.use(express.static('./'));
+app.use(express.static(`${ __dirname }/../../dist`));
 app.listen(8081);
 
 main();
