@@ -23,10 +23,11 @@ function task() {
     $.getJSON('/check', e => {
         singleData.result = e;
         singleData.index ++ ;
+	setTimeout(task, 1000);
     });
-    setTimeout(task, 1000);
 }
 task();
+setTimeout(task, 10000);
 export default {
     data() {
         return singleData;

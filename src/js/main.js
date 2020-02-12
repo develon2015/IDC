@@ -11,8 +11,16 @@ let result = {
 }
 function main() {
     console.log(`第${ ++result.count }次监控：`)
-    child_process.execSync(`wget -O index.html '${URL}';`);
+    try {
+	    const filename = `${ __dirname }/index.html`;
+	    child_process.execSync(`rm -rf ${ filename } && wget -O ${ filename } '${URL}';`);
+    } catch(e) {
+	    console.log('wget error');
+    }
     const html = fs.readFileSync(`${__dirname}/index.html`).toString();
+    if (html.trim() === '') {
+	    console.log('next');
+    }
 
     const dom = new JSDOM(html);
     let test = dom.window.document.querySelectorAll(
